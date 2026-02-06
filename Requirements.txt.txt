@@ -1,3 +1,42 @@
+Building a RAG (Retrieval-Augmented Generation) system for a hackathon requires a clear "Information Architecture." You aren't just storing text; you are building a knowledge retrieval system that distinguishes between "The Final Truth" and "The Conversation."
+
+1. The Data Hierarchy (What you store)
+You must handle two separate "Buckets" of data to allow for deep drill-downs:
+
+Bucket A: The Structured "Gold" Data (The JSON)
+
+Key Summary: The high-level "too long; didn't read" overview.
+
+Decisions Made: Specific, finalized outcomes.
+
+Action Items: Tasks with owners and deadlines.
+
+Bucket B: The Unstructured "Raw" Data (The Transcript)
+
+The full "Who-said-what" text. This is essential for the "Why" and "How" questions that the summary might miss.
+
+2. The Retrieval Logic (The "Drill-Down")
+Your RAG needs to be "Aware" of where to look based on the user's intent:
+
+Case 1 (Surface Query): If the user asks "What was the meeting about?", the system should prioritize Bucket A (Summary).
+
+Case 2 (Detail Query): If the user asks "What are Mike's tasks?", the system should filter specifically for Bucket A (Action Items).
+
+Case 3 (Deep Query): If the user asks "Why did we decide on Monday instead of Friday?", the system must search Bucket B (Transcript) to find the actual dialogue.
+
+3. Metadata Tagging (The Secret Sauce)
+To make this work in ChromaDB, every piece of data you save must have a label (Metadata). This is how you prevent the AI from confusing a random suggestion in the transcript with a final decision.
+
+Tags to use: source: mentor_json, source: raw_transcript, type: action_item, type: decision, type: summary.
+
+4. The "Creative" Requirements (Hackathon Edge)
+To go "beyond the needs," your RAG should provide:
+
+Traceability (Citations): When the AI answers a drill-down, it should tell the user exactly which line of the transcript it used as evidence.
+
+Confidence Scoring: If a question is asked that isn't in the summary OR the transcript, the AI should say "Information not found" rather than guessing.
+
+
 Input:
 
 {
