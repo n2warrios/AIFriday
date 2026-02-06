@@ -1,0 +1,4 @@
+chromadb
+transformers
+torch
+difflib
