@@ -10,7 +10,8 @@ import os
 from chromadb import Client
 
 # --- Model Integration ---
-MODEL_PATH = r"C:\Models\gte-large"
+import os
+MODEL_PATH = os.environ.get("RAG_MODEL_PATH", r"C:\Models\gte-large")
 
 try:
     from transformers import AutoTokenizer, AutoModel
@@ -64,7 +65,8 @@ class LocalEmbeddingFunction:
 
 embedding_function = LocalEmbeddingFunction()
 client = Client()
-collection = client.create_collection("meeting_rag", embedding_function=embedding_function)
+collection_name = os.environ.get("RAG_COLLECTION_NAME", "meeting_rag")
+collection = client.create_collection(collection_name, embedding_function=embedding_function)
 
 def insert_segments(input_data):
     docs = []
@@ -98,6 +100,7 @@ def classify_query_type(query: str) -> str:
     return "transcript"
 
 def extract_owner_from_query(query: str) -> str:
+    # Existing patterns
     match = re.search(r"([A-Za-z]+)'s task", query)
     if match:
         return match.group(1)
@@ -110,6 +113,10 @@ def extract_owner_from_query(query: str) -> str:
     match = re.search(r"responsible for ([A-Za-z]+)", query)
     if match:
         return match.group(1)
+    # New: handle 'What is Mike responsible for?'
+    match = re.search(r"what is ([A-Za-z]+) responsible for", query.lower())
+    if match:
+        return match.group(1).capitalize()
     return ""
 
 def extract_task_from_query(query: str) -> str:
@@ -141,7 +148,7 @@ def process_drilldown(user_query: str, input_data: dict) -> dict:
                     "answer": answer,
                     "data_source": meta["source"],
                     "evidence": [meta],
-                    "relevance_score": 1.0,
+                    "relevance_score": 1.0,  # Always 1.0 for strict match
                     "meeting_id": input_data["meeting_id"]
                 }
         results = collection.query(
