@@ -1,0 +1,35 @@
+Input:
+
+{
+  "meeting_id": "MGT-101",
+  "transcript": "Sarah: We should aim for a March launch. Mike: I need until April 15th for the database.",
+  "key_summary": "The team discussed shifting the Q2 launch timeline.",
+  "decisions_made": [
+    "The launch date is officially moved to April 15th."
+  ],
+  "action_items": [
+    {
+      "task": "Update the roadmap",
+      "owner": "Sarah",
+      "due": "Feb 20th"
+    },
+    {
+      "task": "Complete database migration",
+      "owner": "Mike",
+      "due": "April 1st"
+    }
+  ]
+}
+
+
+Output:
+
+# How the UI Dev calls your code:
+from rag_module import process_drilldown
+
+# result will contain the Output Format above
+result = process_drilldown(user_query, input_data)
+
+st.write(result["answer"])
+with st.expander("View Evidence"):
+    st.write(result["evidence"])
