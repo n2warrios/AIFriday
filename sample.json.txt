@@ -1,0 +1,12 @@
+// sample.json
+{
+  "name": "John Doe",
+  "age": 30,
+  "email": "john.doe@example.com",
+  "skills": ["Python", "Machine Learning", "Streamlit"],
+  "address": {
+    "street": "123 Main St",
+    "city": "Metropolis",
+    "country": "USA"
+  }
+}
